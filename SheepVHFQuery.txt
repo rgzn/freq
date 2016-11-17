@@ -1,0 +1,17 @@
+SELECT AllSheepCollars.VHFColFreq AS Frequency
+	,Left([AllSheepCollars].[Datedt], 10) AS CaptDate
+	,"bighorn" AS Species
+	,AllSheepCollars.AnimalID
+	,AllSheepCollars.Type
+	,AllSheepCollars.VHFMake AS Make
+	,AllSheepCollars.StatusVHF AS Status
+	,AllSheepCollars.Herd AS HU
+  ,AllSheepCollars.RU
+FROM AllSheepCollars
+WHERE (
+		(
+			(AllSheepCollars.StatusVHF) LIKE "ow"
+			OR (AllSheepCollars.StatusVHF) = "aw"
+			)
+
+		);
