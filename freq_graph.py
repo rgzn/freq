@@ -4,9 +4,13 @@ Spyder Editor
 
 This is a temporary script file.
 """
+
+# Use the Python 3 print() instead of the shitty old one:
 from __future__ import print_function
 
 import networkx as nx
+import scipy as sp
+import pandas as pd
 import numpy as np
 import sqlite3 as sql
 import csv
@@ -116,7 +120,7 @@ def in1d_tolerance(a, b, tol=1e-6):
     intervals[::2] = a - tol
     intervals[1::2] = a + tol
     overlaps = intervals[:-1] >= intervals[1:]
-    overlaps[1:] = overlaps[1:] | overlaps[:-1]
+    overlaps[1:] = overlaps[1:] | overlaps[:-1]  
     keep = np.concatenate((~overlaps, [True]))
     intervals = intervals[keep]
     return np.searchsorted(intervals, b, side='right') & 1 == 1
@@ -150,6 +154,7 @@ def txt2table(txtFile, db, tableName, fieldNames=None) :
         
         
 
+collars = pd.read_csv('AllCollarsList.txt', header=None, names=allCollarsFieldNames)
 
     
 all_frequencies = np.r_[159.0:160.0:0.001]
