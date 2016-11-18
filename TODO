@@ -1,0 +1,9 @@
+1. Convert database acces to pandas dataframe. Write functions to access frequencies using pandas
+2. convert graph to graphml, try to make it compatible with yEd
+3. Gooey interface
+4. basic 1 frequency function: what pops are available for FreqX?
+5. basic availability function: what freqs are available in popX? 
+6. visualizations: 
+  - network visualization
+  - available frequency vis
+  - available population vis
