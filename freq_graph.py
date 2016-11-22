@@ -10,6 +10,7 @@ from __future__ import print_function
 
 import networkx as nx
 import scipy as sp
+import re
 import pandas as pd
 import numpy as np
 import sqlite3 as sql
@@ -49,6 +50,12 @@ populations = {
   'iel' : 'Independence Elk',
   'lpe' : 'Lone Pine Elk',
 }
+
+populations_df = {'label': [],
+                  'species' : [],
+                  'location'}
+
+
 
 
 
@@ -155,7 +162,10 @@ def txt2table(txtFile, db, tableName, fieldNames=None) :
         
 
 collars = pd.read_csv('AllCollarsList.txt', header=None, names=allCollarsFieldNames)
-
+active_collar_locations = collars[collars.status.str.match(r'^AW', as_indexer=True)]['location'].unique()
+active_populations = x = (collars[collars.status.str.match(r'^AW', as_indexer=True)]['species'] + 
+                      ' | ' + 
+                      collars[collars.status.str.match(r'^AW', as_indexer=True)]['location']).unique()
     
 all_frequencies = np.r_[159.0:160.0:0.001]
 
