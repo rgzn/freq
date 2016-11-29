@@ -51,10 +51,9 @@ populations = {
   'lpe' : 'Lone Pine Elk',
 }
 
-populations_df = {'label': [],
-                  'species' : [],
-                  'location'}
-
+populations_df = pd.DataFrame({'location': 
+  {0: 'CDB', 1: 'Olancha Peak', 2: 'RVD', 3: 'Bodie Hills', 4: 'Mt. Williamson', 5: 'GD0', 6: 'Taboose Creek', 7: 'Sawmill Canyon', 8: 'Round Valley', 9: 'Mt. Gibbs', 10: 'Mt. Warren', 11: 'Independence Elk', 12: 'Wheeler Ridge', 13: 'Mt. Langley', 14: 'Bubbs Creek', 15: 'Laurel Creek', 16: 'Olancha Bobcat', 17: 'Big Pine Bobcat', 18: 'Big Arroyo', 19: 'Independence Bobcat', 20: 'Crater Mountain Elk', 21: 'Mt. Baxter', 22: 'Cathedral', 23: 'Lone Pine Elk', 24: 'Bobcat', 25: 'Convict Creek'}, 'species': {0: 'deer', 1: 'bighorn', 2: 'deer', 3: 'Pronghorn', 4: 'bighorn', 5: 'deer', 6: 'bighorn', 7: 'bighorn', 8: 'Bobcat', 9: 'bighorn', 10: 'bighorn', 11: 'Independence Elk', 12: 'bighorn', 13: 'bighorn', 14: 'bighorn', 15: 'bighorn', 16: 'Olancha Bobcat', 17: 'Big Pine Bobcat', 18: 'bighorn', 19: 'Independence Bobcat', 20: 'Crater Mountain Elk', 21: 'bighorn', 22: 'bighorn', 23: 'Lone Pine Elk', 24: 'Bobcat', 25: 'bighorn'}, 'label': {0: 'cdd', 1: 'ola', 2: 'rvd', 3: 'pro', 4: 'wil', 5: 'gde', 6: 'tab', 7: 'saw', 8: 'bbo', 9: 'gib', 10: 'war', 11: 'iel', 12: 'whe', 13: 'lan', 14: 'bub', 15: 'lau', 16: 'obo', 17: 'bpb', 18: 'bar', 19: 'ibo', 20: 'cme', 21: 'bax', 22: 'cat', 23: 'lpe', 24: 'lpb', 25: 'con'}}
+)
 
 
 
@@ -82,8 +81,7 @@ popSpeciesLocationDict = {
   'bpb' : 'Big Pine Bobcat',
   'ibo' : 'Independence Bobcat',
   'lpb' : 'Bobcat',
-  'obo' : 'Olancha Bobcat',
-  'cme' : 'Crater Mountain Elk',
+,   'cme' : 'Crater Mountain Elk',
   'iel' : 'Independence Elk',
   'lpe' : 'Lone Pine Elk',
 }
@@ -170,15 +168,19 @@ active_populations = x = (collars[collars.status.str.match(r'^AW', as_indexer=Tr
 all_frequencies = np.r_[159.0:160.0:0.001]
 
 
+# networkAdjacencyFile = "adjacencyList.txt"
+networkAdjacenecyFile = "adjacencylist_test.txt"
+
 popGraphFile = open("adjacencylist.txt", "r")
 
 popGraph = nx.read_adjlist(popGraphFile)
-   
+     
 geoLayout = nx.shell_layout(popGraph)
 
 for herd, loc in herdLayout.iteritems(): 
   geoLayout[herd] = [x*2 for x in loc]
   
+springLayout = nx.spring_layout(popGraph)
 
 collarDB = sql.connect("Collars.db")
 cursor = collarDB.cursor()
@@ -192,3 +194,21 @@ freq_list = map(first, results)
 freqs = np.sort(freq_list)
 
 unused_frequencies = [x for x in all_frequencies if all(np.abs( freqs - x ) > 0.005) ]
+
+def findAvailablePops(input_frequency) :
+  nearby_collars = collars[(collars.status.str.match(r'^AW')) & 
+    (abs(collars.frequency - input_frequency) < 0.005) ]
+  occupied_locations = nearby_collars['location'].unique()
+  occupied_pops = populations_df[populations_df.location.isin(occupied_locations)]['label'].unique()
+  invalid_pops = list(occupied_pops)
+  for pop in occupied_pops: 
+    invalid_pops += popGraph.neighbors(pop)
+  invalid_pops = unique(invalid_pops)
+  valid_pops = populations_df[populations_df.label.isin(invalid_pops) == False]
+  return(valid_pops)
+  
+def findAvailableFreqs(input_pop) : 
+  
+
+    
+  
