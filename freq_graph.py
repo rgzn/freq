@@ -165,7 +165,7 @@ active_populations = x = (collars[collars.status.str.match(r'^AW', as_indexer=Tr
                       ' | ' + 
                       collars[collars.status.str.match(r'^AW', as_indexer=True)]['location']).unique()
     
-all_frequencies = np.r_[159.0:160.0:0.001]
+ALL_FREQUENCIES = np.r_[159.0:161.0:0.001]
 
 
 # networkAdjacencyFile = "adjacencyList.txt"
@@ -195,9 +195,17 @@ freqs = np.sort(freq_list)
 
 unused_frequencies = [x for x in all_frequencies if all(np.abs( freqs - x ) > 0.005) ]
 
+
+###########################################
+
+def bandwidthComplement(all_freqs, input_freqs, freq_width = 0.01) : 
+  freq_margin = freq_width/2
+  complement_freqs = [x for x in all_freqs if all(np.abs( input_freqs - x) > freq_margin)]
+  return(complement_freqs)
+
 def findAvailablePops(input_frequency) :
   nearby_collars = collars[(collars.status.str.match(r'^AW')) & 
-    (abs(collars.frequency - input_frequency) < 0.005) ]
+    (np.abs(collars.frequency - input_frequency) < 0.005) ]
   occupied_locations = nearby_collars['location'].unique()
   occupied_pops = populations_df[populations_df.location.isin(occupied_locations)]['label'].unique()
   invalid_pops = list(occupied_pops)
@@ -207,7 +215,33 @@ def findAvailablePops(input_frequency) :
   valid_pops = populations_df[populations_df.label.isin(invalid_pops) == False]
   return(valid_pops)
   
-def findAvailableFreqs(input_pop) : 
+
+
+def findAvailableFreqs(input_pops, all_freqs = ALL_FREQUENCIES) : 
+  neighborhood_pops = []
+  for pop in input_pops :
+    neighborhood_pops += popGraph.neighbors(pop) + [pop]
+  neighborhood_pops = np.unique(neighborhood_pops)
+  neighborhood_freqs = np.array([])
+  for pop in neighborhood_pops : 
+    spec = populations_df[populations_df.label == pop]['species'].iloc[0]
+    loc  = populations_df[populations_df.label == pop]['location'].iloc[0]
+    used = collars[ (collars.species == spec) & (collars.location == loc) ]['frequency'].values
+    neighborhood_freqs = append(neighborhood_freqs, used)
+  neighborhood_freqs.sort()
+  neighborhood_freqs = np.unique(neighborhood_freqs) 
+  return bandwidthComplement(all_freqs, neighborhood_freqs)
+
+def printFreqs(freq_list) :
+  for f in freq_list : 
+     print( "%3.3f" % (f) )
+  
+    
+  
+  
+
+  
+  
   
 
     
