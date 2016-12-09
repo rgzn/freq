@@ -81,7 +81,7 @@ popSpeciesLocationDict = {
   'bpb' : 'Big Pine Bobcat',
   'ibo' : 'Independence Bobcat',
   'lpb' : 'Bobcat',
-,   'cme' : 'Crater Mountain Elk',
+  'cme' : 'Crater Mountain Elk',
   'iel' : 'Independence Elk',
   'lpe' : 'Lone Pine Elk',
 }
@@ -214,7 +214,6 @@ def findAvailablePops(input_frequency) :
   invalid_pops = unique(invalid_pops)
   valid_pops = populations_df[populations_df.label.isin(invalid_pops) == False]
   return(valid_pops)
-  
 
 
 def findAvailableFreqs(input_pops, all_freqs = ALL_FREQUENCIES) : 
